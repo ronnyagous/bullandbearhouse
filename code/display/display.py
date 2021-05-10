@@ -33,7 +33,9 @@ class bbh_display:
         self.epd.Clear()
 
 
-    def displayRate(self, priceUsd, bitcoinHistory, vwap24Hr):
+    def displayRate(self, priceUsd, bitcoinHistory, vwap24Hr, coinName, rateUsd, currencySymbol):
+
+        price = priceUsd / rateUsd
 
         self.epd.init()
 
@@ -48,7 +50,12 @@ class bbh_display:
         testFontSize = 10
         testFont = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), testFontSize)
 
-        priceText = f'$ {priceUsd:.0f}'
+        if (price < 1):
+            priceText = f'{currencySymbol} {price:.4f}'
+        elif (price < 100):
+            priceText = f'{currencySymbol} {price:.2f}'
+        else:
+            priceText = f'{currencySymbol} {price:.0f}'
 
         priceTextTestSize = testFont.getsize(priceText)
         padding = 2
@@ -59,17 +66,28 @@ class bbh_display:
 
         priceTextSize = font.getsize(priceText)
 
-        # Step 2: Display graph
+
+        smallFont = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 20)
+
+        # Step 2: Display coin name
+
+        coinNameSize = smallFont.getsize(coinName)
+        coinNameLeft = int((self.epd.width - coinNameSize[0])/2)
+        coinNameTop = padding + priceTextSize[1] + padding
+        drawblack.text((coinNameLeft, coinNameTop), coinName, font = smallFont, fill = 0x00)
 
 
-        topMargin = padding + priceTextSize[1] + padding
+        # Step 3: Display graph
+
+
+        topMargin = coinNameTop + coinNameSize[1] + padding
         leftMargin = padding
         rightMargin = padding
         availableHeight = self.epd.height - padding - topMargin
         availableWidth = self.epd.width - leftMargin - rightMargin
 
-        minPrice = float(min(bitcoinHistory, key=lambda h: h['priceUsd'])['priceUsd'])
-        maxPrice = float(max(bitcoinHistory, key=lambda h: h['priceUsd'])['priceUsd'])
+        minPrice = float(min(bitcoinHistory, key=lambda h: h['priceUsd'])['priceUsd']) / rateUsd
+        maxPrice = float(max(bitcoinHistory, key=lambda h: h['priceUsd'])['priceUsd']) / rateUsd
 
         priceCount = len(bitcoinHistory)
 
@@ -77,7 +95,7 @@ class bbh_display:
 
         for index, history in enumerate(bitcoinHistory):
 
-            price = float(bitcoinHistory[index]['priceUsd'])
+            price = float(bitcoinHistory[index]['priceUsd']) / rateUsd
 
             x = int(leftMargin + ((index / priceCount) * availableWidth))
             y = int(topMargin + (((maxPrice - price ) / (maxPrice - minPrice)) * availableHeight))
@@ -87,27 +105,38 @@ class bbh_display:
 
             previousPoint = (x,y)
 
-
         averageY = int(topMargin + (((maxPrice - vwap24Hr ) / (maxPrice - minPrice)) * availableHeight))
 
         drawblack.line((leftMargin, averageY, leftMargin + availableWidth, averageY), fill = 0, width = 1)
 
-        smallFont = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 20)
 
 
         percChange = ((priceUsd - vwap24Hr)/(vwap24Hr)) * 100
         percChangeText = f'{percChange:.2f}%'
         percChangeTextSize = smallFont.getsize(percChangeText)
-        
+
         if (priceUsd > vwap24Hr):
             drawblack.rectangle((leftMargin + availableWidth - percChangeTextSize[0], topMargin + availableHeight - percChangeTextSize[1],leftMargin + availableWidth , topMargin + availableHeight), fill = 0xFF)
-            drawblack.text((leftMargin + availableWidth - percChangeTextSize[0], topMargin + availableHeight - percChangeTextSize[1]), percChangeText, font = smallFont, fill =0x00)
+            drawblack.text((leftMargin + availableWidth - percChangeTextSize[0], topMargin + availableHeight - percChangeTextSize[1]), percChangeText, font = smallFont, fill = 0x00)
         else:
             drawblack.rectangle((leftMargin + availableWidth - percChangeTextSize[0], topMargin, leftMargin + availableWidth, topMargin +  percChangeTextSize[1]), fill = 0xFF)
             drawblack.text((leftMargin + availableWidth - percChangeTextSize[0], topMargin), percChangeText, font = smallFont, fill = 0x00)
-            
-        maxText = f'{maxPrice:.0f}'
-        minText = f'{minPrice:.0f}'
+
+
+        if (maxPrice < 1):
+            maxText = f'{maxPrice:.4f}'
+        elif (maxPrice < 100):
+            maxText = f'{maxPrice:.2f}'
+        else:
+            maxText = f'{maxPrice:.0f}'
+
+        if (minPrice < 1):
+            minText = f'{minPrice:.4f}'
+        elif (minPrice < 100):
+            minText = f'{minPrice:.2f}'
+        else:
+            minText = f'{minPrice:.0f}'
+
         maxTextSize = smallFont.getsize(maxText)
         minTextSize = smallFont.getsize(minText)
 
@@ -126,4 +155,5 @@ class bbh_display:
     def gotoSleep(self):
         logging.info("Goto Sleep...")
         self.epd.sleep()
-        
+
+
