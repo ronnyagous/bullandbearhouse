@@ -1,8 +1,7 @@
 # bullandbearhouse
 Good times and bad times
 
-![display](display_1.jpeg)
-![display](display_2.jpeg)
+![display](Bull-And-Bear-house-2-2048x1163.png)
 
 ## Hardware
 * Raspberry Pi Zero W (or any other RPi)
