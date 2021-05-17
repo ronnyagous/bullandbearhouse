@@ -19,7 +19,7 @@ class bbh_servo:
         servo_pin = 18
 
     def set_position(self, percentage):
-        position = 28
+        position = 27
 
         logging.debug(f'percentage = {percentage}')
 
@@ -28,7 +28,7 @@ class bbh_servo:
             position = 22
         elif percentage < -5:
             position = 23
-        elif percentage < -2.5:
+        elif percentage < -2:
             position = 24
         elif percentage < -1:
             position = 25
@@ -38,7 +38,7 @@ class bbh_servo:
             position = 27
         elif percentage < 1:
             position = 28
-        elif percentage < 2.5:
+        elif percentage < 2:
             position = 29
         elif percentage < 5:
             position = 30
@@ -72,7 +72,8 @@ class bbh_servo:
             servo.start(0)
 
             servo.ChangeDutyCycle(position)
-            time.sleep(1)
+
+            time.sleep(5)
 
             servo.stop()
             GPIO.cleanup()
