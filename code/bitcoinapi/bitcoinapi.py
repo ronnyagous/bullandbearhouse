@@ -1,5 +1,4 @@
-  GNU nano 3.2                                                                                                   bitcoinapi/bitcoinapi.py                                                                                                             
-import urllib.request, json
+import urllib.request, json 
 from datetime import datetime, timedelta
 
 import logging
@@ -41,7 +40,7 @@ class bbh_bitcoinapi:
     def history(self, coin):
         result = None
 
-        interval = 'm1'
+        interval = 'm5'
         starttime = int(datetime.timestamp(datetime.now() - timedelta(hours=24))) * 1000
         endtime = int(datetime.timestamp(datetime.now())) * 1000
 
@@ -55,3 +54,4 @@ class bbh_bitcoinapi:
             result = codedData['data']
 
         return result
+
