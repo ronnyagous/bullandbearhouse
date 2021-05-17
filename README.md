@@ -54,3 +54,5 @@ Weather House with Bull and Bear
 The following screens are supported:
 * epd1in54_V2
 * epd1in54b_V2
+
+More info: https://bullandbear.house
