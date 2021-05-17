@@ -69,6 +69,7 @@ class bbh_display:
 
         smallFont = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 20)
 
+
         # Step 2: Display coin name
 
         coinNameSize = smallFont.getsize(coinName)
@@ -80,10 +81,10 @@ class bbh_display:
         # Step 3: Display graph
 
 
-        topMargin = coinNameTop + coinNameSize[1] + padding
-        leftMargin = padding
+        topMargin = coinNameTop + coinNameSize[1] + padding 
+        leftMargin = padding 
         rightMargin = padding
-        availableHeight = self.epd.height - padding - topMargin
+        availableHeight = self.epd.height - padding - topMargin 
         availableWidth = self.epd.width - leftMargin - rightMargin
 
         minPrice = float(min(bitcoinHistory, key=lambda h: h['priceUsd'])['priceUsd']) / rateUsd
@@ -105,10 +106,15 @@ class bbh_display:
 
             previousPoint = (x,y)
 
+
+
         averageY = int(topMargin + (((maxPrice - vwap24Hr ) / (maxPrice - minPrice)) * availableHeight))
 
-        drawblack.line((leftMargin, averageY, leftMargin + availableWidth, averageY), fill = 0, width = 1)
+        logging.debug(f'{averageY} = int({topMargin} + ((({maxPrice} - {vwap24Hr} ) / ({maxPrice} - {minPrice})) * {availableHeight}))')
 
+
+
+        drawblack.line((leftMargin, averageY, leftMargin + availableWidth, averageY), fill = 0, width = 1)
 
 
         percChange = ((priceUsd - vwap24Hr)/(vwap24Hr)) * 100
@@ -155,5 +161,6 @@ class bbh_display:
     def gotoSleep(self):
         logging.info("Goto Sleep...")
         self.epd.sleep()
+
 
 
