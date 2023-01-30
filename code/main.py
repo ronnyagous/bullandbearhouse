@@ -5,16 +5,19 @@ from bitcoinapi import bitcoinapi
 from servo import servo
 
 import time
+import datetime
 import logging
 
 bitcoinApi = bitcoinapi.bbh_bitcoinapi()
 display = display.bbh_display(True)
 display.clear()
 
+
 servo = servo.bbh_servo()
 
-servo.set_position(-11,1)
-servo.set_position(11,1)
+servo.set_position(-11, 1)
+servo.set_position(11, 1)
+
 servo.set_position(0)
 
 if (True):
@@ -22,16 +25,19 @@ if (True):
 else:
     currency = "euro"
 
+
 coin = "bitcoin"
 #coin = "ethereum"
 #coin = "binance-coin"
 #coin = "dogecoin"
 #coin = "xrp"
 
-    
 while (True):
 
     try:
+        currentDatetime = datetime.datetime.now()
+        print(f'Checking new price at {currentDatetime}')
+
         bitcoin_data = bitcoinApi.currentPrice(coin)
         bitcoinHistory = bitcoinApi.history(coin)
         rate = bitcoinApi.rate(currency)
@@ -48,9 +54,9 @@ while (True):
         display.gotoSleep()
 
         servo.set_position(percentage)
+        
+        while ((datetime.datetime.now() - currentDatetime).seconds < 300):
+            time.sleep(1)
 
     except Exception as e:
         print(f'Exception: {e}')
-
-    time.sleep(300)
-    
