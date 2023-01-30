@@ -9,12 +9,13 @@ import logging
 
 bitcoinApi = bitcoinapi.bbh_bitcoinapi()
 display = display.bbh_display(True)
+display.clear()
 
 servo = servo.bbh_servo()
-servo.set_position(0)
 
-display.clear()
-time.sleep(1)
+servo.set_position(-11,1)
+servo.set_position(11,1)
+servo.set_position(0)
 
 if (True):
     currency = "united-states-dollar"
@@ -22,15 +23,19 @@ else:
     currency = "euro"
 
 coin = "bitcoin"
+#coin = "ethereum"
+#coin = "binance-coin"
+#coin = "dogecoin"
+#coin = "xrp"
 
-
+    
 while (True):
 
     try:
         bitcoin_data = bitcoinApi.currentPrice(coin)
         bitcoinHistory = bitcoinApi.history(coin)
         rate = bitcoinApi.rate(currency)
-        
+
         priceUsd = float(bitcoin_data["priceUsd"])
         vwap24Hr = float(bitcoin_data["vwap24Hr"])
         coinName = bitcoin_data["name"]
@@ -47,5 +52,5 @@ while (True):
     except Exception as e:
         print(f'Exception: {e}')
 
-    time.sleep(60)
+    time.sleep(300)
     
